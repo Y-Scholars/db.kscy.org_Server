@@ -1,0 +1,54 @@
+- hosts: servers
+  vars:
+    dbname: jspark
+  tasks:
+
+  - name: ensure apt cache is up to date
+    apt: update_cache=yes
+# ==============================================
+# Installing Java
+  - name: Install java 8 preresequesits
+    apt: name=python-software-properties
+
+  - name: Add Java 8 repository
+    apt_repository: repo='ppa:webupd8team/java'
+
+  - name: Agree to oracle license
+    debconf: name=oracle-java8-installer question=shared/accepted-oracle-license-v1-1 vtype=select value=true
+
+  - name: Install Java 8
+    apt: name=oracle-java8-installer force=yes
+
+  - name: Install Java 7 headless
+    apt: name=openjdk-7-jre-headless force=yes
+#===============================================
+  - name: Install postgresql
+    apt: name=postgresql
+
+  - name: Check elasticsearch
+    service:
+      name: node1_elasticsearch
+      state: started
+
+#Install nginx
+#TODO: Change hosts
+- hosts: servers
+
+  roles:
+  - role: nginx
+    nginx_sites:
+      custom_bar:
+        template: nginx_template.j2
+        server_port: 8888
+        server_name: custom_bar.example.com
+        proxy_pass: http://127.0.0.1:3333
+
+#postgresql configure
+- hosts: servers
+
+  vars:
+    dbname: jspark  
+
+  tasks:
+  - name: ensure database is created
+    postgresql_db: name={{dbname}}
