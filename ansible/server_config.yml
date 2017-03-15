@@ -30,6 +30,16 @@
       name: node1_elasticsearch
       state: started
 
+  - name: Install pip
+    apt: name=python-pip force=yes
+
+  - name: Install python-dev
+    apt: name=python-dev force=yes
+
+  - name: Install postgresql-server-dev-all
+    apt: name=postgresql-server-dev-all force=yes
+
+
 #Install nginx
 #TODO: Change hosts
 - hosts: servers
