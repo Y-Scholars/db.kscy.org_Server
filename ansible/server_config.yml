@@ -39,7 +39,10 @@
   - name: Install postgresql-server-dev-all
     apt: name=postgresql-server-dev-all force=yes
 
-
+  - name: Install psycopg2
+    pip : 
+      name: psycopg2
+    
 #Install nginx
 #TODO: Change hosts
 - hosts: servers
