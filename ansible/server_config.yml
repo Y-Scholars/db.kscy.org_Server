@@ -54,10 +54,22 @@
   gather_facts: no
 #has to change postgres config
   tasks:
+
+  - name: postgresql_db create
+    postgresql_db:
+      name: yscholar
+
   - name: postgresql_user configure
     postgresql_user:
       name: yscholar
       password: secret
+
+  - name: priv configure
+    postgresql_privs:
+      db: yscholar
+      type: database
+      privs: ALL
+      roles: yscholar
 
 #Install nginx
 #TODO: Change hosts
@@ -74,6 +86,40 @@
 
 #Install logstash
 - hosts: servers
-
   roles:
-  - role: ajgarlag.logstash
+    - role: valentinogagliardi.logstash-role
+
+      logstash_defaults: |
+        LS_USER=root
+        LS_HEAP_SIZE="256m"
+        LS_OPTS="--auto-reload --reload-interval 2"
+
+      logstash_patterns: |
+        TIMESTAMP_FOO %{MONTHDAY}-%{MONTH}-%{YEAR}-%{HOUR}:%{MINUTE}:%{SECOND}
+
+      logstash_inputs: |
+        syslog { host => "{{ ansible_eth0.ipv4.address }}"
+                port => "514"
+                type => "syslog_input"
+              }
+
+        syslog { host => "{{ ansible_lo.ipv4.address }}"
+                port => "515"
+                type => "syslog_input_local"
+              }
+
+        grok { patterns_dir => [ "./patterns" ]
+              match => { "message" => "%{TIMESTAMP_FOO:[@metadata][timestamp]} %{GREEDYDATA:message}" }
+            }
+
+      logstash_filters: |
+        geoip { source => "ip_address"
+             }
+
+        multiline { pattern => "^No lfn2pfn"
+                   what => "previous"
+                 }
+
+      logstash_outputs: |
+        file { path => "/var/log/logstash/output.log"
+            }

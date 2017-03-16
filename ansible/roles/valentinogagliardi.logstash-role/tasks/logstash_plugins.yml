@@ -1,4 +1,5 @@
 
 - name: Install Logstash Plugins
-  command: /opt/logstash/bin/logstash-plugin install {{ item.plugin_name }}
+  #command: /usr/share/logstash/bin/logstash-plugin install {{ item.plugin_name }}
+  command: /usr/share/logstash/bin/logstash-plugin install {{item.plugin_name}}
   with_items: "{{ logstash_plugins }}"
