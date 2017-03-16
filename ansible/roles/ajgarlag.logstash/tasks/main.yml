@@ -1,0 +1,75 @@
+---
+# tasks file for ajgarlag.logstash
+- name: adding logstash repository GPG key
+  apt_key:
+    url: https://packages.elasticsearch.org/GPG-KEY-elasticsearch
+
+- name: adding logstash repository
+  apt_repository:
+    repo: deb http://packages.elasticsearch.org/logstash/{{ ajgarlag_logstash_minor_version }}/debian stable main
+    update_cache: yes
+
+- name: checking if JAVA is installed
+  command: java -version
+  ignore_errors: yes
+  register: java_check
+  changed_when: no
+
+- name: installing JAVA package
+  apt:
+    pkg: "{{ ajgarlag_logstash_java_package }}"
+    state: latest
+  when: java_check != 0
+
+- name: installing logstash
+  apt:
+    pkg: logstash
+    state: latest
+
+- name: checking for installed logstash plugins
+  shell: /opt/logstash/bin/plugin list | grep {{ item }}
+  with_items: ajgarlag_logstash_plugins
+  register: ajgarlag_logstash_plugins_status
+  changed_when: no
+  failed_when: no
+
+- name: installing logstash plugins
+  command: "/opt/logstash/bin/plugin install {{item.item}}"
+  with_items: ajgarlag_logstash_plugins_status.results
+  when: ajgarlag_logstash_plugins|length > 0 and item.rc > 0
+
+- name: setting logstash to autostart
+  service:
+    name: logstash
+    enabled: yes
+  notify:
+    - restart logstash
+
+- name: copying logstash configuration files
+  copy:
+    src: "{{ item }}"
+    dest: /etc/logstash/conf.d/{{ item | basename }}
+    owner: root
+    group: root
+    mode: 0664
+  with_items: ajgarlag_logstash_configuration_files
+  notify:
+    - restart logstash
+
+- name: copying logstash configuration templates
+  template:
+    src: "{{ item }}"
+    dest: /etc/logstash/conf.d/{{ item | basename }}
+    owner: root
+    group: root
+    mode: 0664
+  with_items: ajgarlag_logstash_configuration_templates
+  notify:
+    - restart logstash
+
+- name: setting logstash default options
+  lineinfile:
+    dest: /etc/default/logstash
+    line: '{{ item.key }}={{item.value}}'
+    regexp: '^#?{{ item.key }}='
+  with_dict: ajgarlag_logstash_default_options

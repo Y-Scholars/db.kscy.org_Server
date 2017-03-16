@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  remote_user: root
+  roles:
+    - role: ajgarlag.logstash
+      ajgarlag_logstash_plugins:
+        - logstash-input-relp

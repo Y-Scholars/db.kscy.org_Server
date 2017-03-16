@@ -71,3 +71,9 @@
         server_port: 8888
         server_name: kscy.or.kr #TODO Change server_name
         proxy_pass: http://127.0.0.1:3333 #TODO Change proxy_pass port
+
+#Install logstash
+- hosts: servers
+
+  roles:
+  - role: ajgarlag.logstash
