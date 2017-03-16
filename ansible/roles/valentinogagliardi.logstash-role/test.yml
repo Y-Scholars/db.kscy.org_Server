@@ -1,0 +1,19 @@
+- hosts: localhost
+  become: yes
+  roles:
+    - role: logstash-role
+      logstash_defaults: |
+        LS_USER=root
+        LS_HEAP_SIZE="256m"
+        LS_OPTS="--auto-reload --reload-interval 2"
+      
+      logstash_inputs: |
+        file {
+              path => "/var/log/auth.log"
+             }
+
+      logstash_filters: |
+        # dummy
+
+      logstash_outputs: |
+        # dummy

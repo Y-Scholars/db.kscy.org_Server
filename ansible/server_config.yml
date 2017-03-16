@@ -40,9 +40,17 @@
     apt: name=postgresql-server-dev-all force=yes
 
   - name: Install psycopg2
-    pip : 
+    pip :
       name: psycopg2
-    
+  - name: Install postgresql
+    apt:
+      name: postgresql
+
+  - name: postgresql_user configure
+    postgresql_user:
+      name: yscholar
+      password: secret
+
 #Install nginx
 #TODO: Change hosts
 - hosts: servers
@@ -50,18 +58,8 @@
   roles:
   - role: nginx
     nginx_sites:
-      custom_bar:
+      elasticsearch_yschola:
         template: nginx_template.j2
         server_port: 8888
-        server_name: custom_bar.example.com
-        proxy_pass: http://127.0.0.1:3333
-
-#postgresql configure
-- hosts: servers
-
-  vars:
-    dbname: jspark  
-
-  tasks:
-  - name: ensure database is created
-    postgresql_db: name={{dbname}}
+        server_name: kscy.or.kr #TODO Change server_name
+        proxy_pass: http://127.0.0.1:3333 #TODO Change proxy_pass port
