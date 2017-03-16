@@ -46,6 +46,14 @@
     apt:
       name: postgresql
 
+#Has to login as user postgres
+#Authentication method is peer
+- hosts: servers
+  become: yes
+  become_user: postgres
+  gather_facts: no
+#has to change postgres config
+  tasks:
   - name: postgresql_user configure
     postgresql_user:
       name: yscholar
