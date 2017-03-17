@@ -98,28 +98,30 @@
         TIMESTAMP_FOO %{MONTHDAY}-%{MONTH}-%{YEAR}-%{HOUR}:%{MINUTE}:%{SECOND}
 
       logstash_inputs: |
-        syslog { host => "{{ ansible_eth0.ipv4.address }}"
-                port => "514"
-                type => "syslog_input"
-              }
 
-        syslog { host => "{{ ansible_lo.ipv4.address }}"
-                port => "515"
-                type => "syslog_input_local"
-              }
+        jdbc {
+          jdbc_connection_string => "jdbc:postgresql://localhost:5432/mydb"
+          jdbc_user => "postgres"
+          jdbc_validate_connection => true
+          jdbc_driver_library => "/path/to/postgresql-9.4-1201.jdbc41.jar"
+          jdbc_driver_class => "org.postgresql.Driver"
+          statement => "SELECT * from contacts"
+          }
 
-        grok { patterns_dir => [ "./patterns" ]
-              match => { "message" => "%{TIMESTAMP_FOO:[@metadata][timestamp]} %{GREEDYDATA:message}" }
-            }
 
-      logstash_filters: |
-        geoip { source => "ip_address"
-             }
-
-        multiline { pattern => "^No lfn2pfn"
-                   what => "previous"
-                 }
+      # logstash_filters: |
+      #   geoip { source => "ip_address"
+      #        }
+      #
+      #   multiline { pattern => "^No lfn2pfn"
+      #              what => "previous"
+      #            }
 
       logstash_outputs: |
-        file { path => "/var/log/logstash/output.log"
-            }
+        elasticsearch {
+          protocol => http
+          index => "contacts"
+          document_type => "contact"
+          document_id => "%{uid}"
+          host => "ES_NODE_HOST"
+        }

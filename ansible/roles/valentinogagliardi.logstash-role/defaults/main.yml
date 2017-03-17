@@ -20,4 +20,4 @@ defaults_RedHat: "/etc/sysconfig/logstash"
 defaults_Debian: "/etc/default/logstash"
 
 logstash_plugins:
-  - { plugin_name: "logstash-output-null" }
+  - { plugin_name: "logstash-input-jdbc" }
