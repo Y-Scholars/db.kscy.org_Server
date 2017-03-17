@@ -1,2 +1,11 @@
 # db.kscy.org_Server
-Y Schola Web DB : 청소년 학술 웹 데이터베이스
+Y Schola Web DB : Archive for KSCY researches
+
+How to see apidoc
+~~~
+//install
+npm install apidoc -g
+
+//run
+apidoc -i myapp/ -o apidoc/ -t mytemplate/
+~~~

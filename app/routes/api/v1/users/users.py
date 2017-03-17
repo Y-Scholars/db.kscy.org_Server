@@ -21,6 +21,24 @@ _URL = '/users'
 
 
 class Users(Resource):
+    """
+    @api {get} /users Get users information
+    @apiName Users Info
+    @apiGroup Users
+
+    @apiHeader {String} Authorization Access token.
+    @apiHeaderExample {json} Header-Example:
+      {
+        "Authorization": "304924"
+      }
+
+    @apiParam {int} page Paging number.
+    @apiParam {int} limit Result limit.
+
+    @apiSuccess (200) {String} data Users data.
+    @apiError (401) UnAuthorized You don't have permission.
+
+    """
     @yscholars.API
     @token_auth.login_required
     def get(self):
@@ -41,8 +59,23 @@ class Users(Resource):
 
             return _return, status.HTTP_200_OK
 
-        return "You don't have permission.", status.HTTP_401_UNAUTHORIZED
+        return "UnAuthorized", status.HTTP_401_UNAUTHORIZED
 
+    """
+    @api {post} /users Users SignUp
+    @apiName SignUp
+    @apiGroup Users
+
+    @apiParam {String} email User's email.
+    @apiParam {String} username User's username.
+    @apiParam {String} password User's password.
+
+    @apiSuccess (200) {String} data Users data.
+
+    @apiError (400) UnAuthorized You don't have permission.
+
+
+    """
     @yscholars.API
     def post(self):
         email = request.form.get('email', None)
