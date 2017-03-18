@@ -54,10 +54,13 @@
   gather_facts: no
 #has to change postgres config
   tasks:
+  - name: postgresql_db create
+    postgresql_db:
+      name: yscholar_users
 
   - name: postgresql_db create
     postgresql_db:
-      name: yscholar
+      name: yscholar_archive
 
   - name: postgresql_user configure
     postgresql_user:
@@ -70,6 +73,16 @@
       type: database
       privs: ALL
       roles: yscholar
+
+#Install elasticsearch
+- name: Installing Elasticsearch
+  hosts: servers
+  roles:
+    - { role: elasticsearch, es_instance_name: "node1" }
+  vars:
+    es_plugins:
+      - plugin: marvel
+
 
 #Install nginx
 #TODO: Change hosts
@@ -107,15 +120,11 @@
           jdbc_driver_class => "org.postgresql.Driver"
           statement => "SELECT * from contacts"
           }
+      logstash_filters: |
+        {
 
+        }
 
-      # logstash_filters: |
-      #   geoip { source => "ip_address"
-      #        }
-      #
-      #   multiline { pattern => "^No lfn2pfn"
-      #              what => "previous"
-      #            }
 
       logstash_outputs: |
         elasticsearch {
@@ -123,5 +132,5 @@
           index => "contacts"
           document_type => "contact"
           document_id => "%{uid}"
-          host => "ES_NODE_HOST"
         }
+# host => "ES_NODE_HOST"
