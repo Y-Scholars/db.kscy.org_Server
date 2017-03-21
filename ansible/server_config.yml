@@ -19,16 +19,16 @@
   - name: Install Java 8
     apt: name=oracle-java8-installer force=yes
 
-  - name: Install Java 7 headless
-    apt: name=openjdk-7-jre-headless force=yes
+  - name: Install Java 8 headless
+    apt: name=openjdk-8-jre-headless force=yes
 #===============================================
   - name: Install postgresql
     apt: name=postgresql
 
-  - name: Check elasticsearch
-    service:
-      name: node1_elasticsearch
-      state: started
+#  - name: Check elasticsearch
+#    service:
+#      name: node1_elasticsearch
+#      state: started
 
   - name: Install pip
     apt: name=python-pip force=yes
@@ -45,6 +45,8 @@
   - name: Install postgresql
     apt:
       name: postgresql
+  - name: Download postgresql jdbc driver to /etc/jdbc/postgresql
+    command: wget https://jdbc.postgresql.org/download/postgresql-42.0.0.jre6.jar -P /etc/jdbc/postgresql
 
 #Has to login as user postgres
 #Authentication method is peer
@@ -56,33 +58,49 @@
   tasks:
   - name: postgresql_db create
     postgresql_db:
-      name: yscholar_users
+      name: yscholar
 
-  - name: postgresql_db create
-    postgresql_db:
-      name: yscholar_archive
+#  - name: postgresql_db create
+#    postgresql_db:
+#      name: yscholar_archive
 
   - name: postgresql_user configure
     postgresql_user:
       name: yscholar
       password: secret
 
-  - name: priv configure
+  - name: yscholar_archive configure
     postgresql_privs:
       db: yscholar
       type: database
       privs: ALL
       roles: yscholar
 
-#Install elasticsearch
-- name: Installing Elasticsearch
-  hosts: servers
-  roles:
-    - { role: elasticsearch, es_instance_name: "node1" }
-  vars:
-    es_plugins:
-      - plugin: marvel
+#  - name: yscholar_users configure
+#    postgresql_privs:
+#      db: yscholar_users
+#      type: database
+#      privs: ALL
+#      roles: yscholar
 
+#Install elasticsearch
+#- name: Installing Elasticsearch
+#  hosts: servers
+#  roles:
+#    - { role: elasticsearch, es_instance_name: "node1" }
+#  vars:
+#    es_start_service: false
+    #es_plugins:
+    #  - plugin: marvel
+
+- hosts: servers
+
+  tasks:
+    - name: Downloading elasticsearch
+      command: wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.1.1.deb
+
+    - name: Installing elasticsearch
+      command: dpkg -i elasticsearch-5.1.1.deb
 
 #Install nginx
 #TODO: Change hosts
@@ -113,24 +131,27 @@
       logstash_inputs: |
 
         jdbc {
-          jdbc_connection_string => "jdbc:postgresql://localhost:5432/mydb"
-          jdbc_user => "postgres"
+          jdbc_connection_string => "jdbc:postgresql://localhost:5432/yscholar"
+          jdbc_user => "yscholar"
+          jdbc_password => "secret"
           jdbc_validate_connection => true
-          jdbc_driver_library => "/path/to/postgresql-9.4-1201.jdbc41.jar"
+          jdbc_driver_library => "/etc/jdbc/postgresql/postgresql-42.0.0.jre6.jar"
           jdbc_driver_class => "org.postgresql.Driver"
-          statement => "SELECT * from contacts"
+          statement => "SELECT * from archive_research"
           }
       logstash_filters: |
         {
 
         }
 
-
       logstash_outputs: |
         elasticsearch {
           protocol => http
-          index => "contacts"
-          document_type => "contact"
+          index => "archive"
+          document_type => "research"
           document_id => "%{uid}"
         }
+
+      logstash_plugins: |
+         logstash-input-jdbc
 # host => "ES_NODE_HOST"
