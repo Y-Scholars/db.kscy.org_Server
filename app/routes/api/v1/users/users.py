@@ -70,11 +70,25 @@ class Users(Resource):
     @apiParam {String} username User's username.
     @apiParam {String} password User's password.
 
-    @apiSuccess (200) {String} data Users data.
+    @apiSuccess (201) {String} data Users data.
 
-    @apiError (400) UnAuthorized You don't have permission.
+    @apiError (400) BadRequests BadRequest with error message
+    @apiErrorExample {json} Error-BadRequest-Already exists:
+        HTTP /1.1 400 BadRequest
+        {
+            'message': "'" + value + "' is already exists.",
+                'field': {
+                    'label': getattr(form, field).label.text,
+                    'name': field
+                }
+        }
 
-
+    @apiErrorExample {json} Error-BadRequest-Invalid data format:
+        HTTP /1.1 400 BadRequest
+        {
+            'message': error,
+            'field' : invalid field
+        }
     """
     @yscholars.API
     def post(self):
