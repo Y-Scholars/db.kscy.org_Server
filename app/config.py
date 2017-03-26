@@ -22,7 +22,7 @@ LOGGER_FORMAT = '[%(levelname)s][%(filename)s:%(lineno)s] %(message)s'
 APP_DEFAULT_PORT = 5000
 
 # APP SECRET KEY
-APP_SECRET_KEY = 'APP_SECRET_KEY'
+APP_SECRET_KEY = 'YSCHOLA_SECRET'
 
 # TOKEN
 TOKEN_SCHEME = "bearer"
@@ -57,9 +57,9 @@ DATABASE = {
     'engine': 'postgres',
     'host': 'localhost',
     'port': '5432',
-    'user': '',
-    'password': '',
-    'database': ''
+    'user': 'yscholar',
+    'password': 'secret',
+    'database': 'yscholar'
 }
 
 DATABASE_URI = '%(engine)s://%(user)s:%(password)s@%(host)s:%(port)s/%(database)s' % DATABASE

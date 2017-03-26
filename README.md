@@ -29,3 +29,7 @@ To solve the issue of jvm memory allocations, go to /etc/elasticsearch/jvm.optio
 
 - The default directory for logstash is /usr/share/logstash/. Configuration files are in /etc/logstash directory
  
+ sample
+ ~~~
+ /usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/input.conf
+ ~~~

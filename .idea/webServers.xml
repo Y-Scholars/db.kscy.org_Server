@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="c3153594-1843-4620-9d13-abf368734894" name="Yscholar_Server" url="http://ec2-54-190-7-146.us-west-2.compute.amazonaws.com">
+        <fileTransfer host="ec2-54-190-7-146.us-west-2.compute.amazonaws.com" port="22" privateKey="$PROJECT_DIR$/../../../yscholar_aws.pem" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

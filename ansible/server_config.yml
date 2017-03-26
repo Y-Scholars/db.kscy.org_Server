@@ -154,4 +154,11 @@
 
       logstash_plugins: |
          logstash-input-jdbc
-# host => "ES_NODE_HOST"
+#Write logstash configuration file
+
+- hosts: servers
+  - tasks:
+    - name: Create research_data config file
+      template: src=./research_data.conf dest=/etc/logstash/conf.d/research_data.conf
+    - name: Create researcher_data config file
+      template: src=./researcher_data.conf dest=/etc/logstash/conf.d/researcher_data.conf
