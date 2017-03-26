@@ -69,6 +69,9 @@ class Users(Resource):
     @apiParam {String} email User's email.
     @apiParam {String} username User's username.
     @apiParam {String} password User's password.
+    @apiParam {String} grade User's grade.
+    @apiParam {String} birthday User's birthday.
+    @apiParam {String} location User's location.
 
     @apiSuccess (201) {String} data Users data.
 
@@ -95,6 +98,9 @@ class Users(Resource):
         email = request.form.get('email', None)
         username = request.form.get('username', None)
         password = request.form.get('password', None)
+        grade = request.form.get('grade', None)
+        birthday = request.form.get('birthday', None)
+        location = request.form.get('location', None)
 
         form = usersValidate.RegistrationForm(request.form)
 
@@ -103,7 +109,10 @@ class Users(Resource):
                 user = UserModel(
                     username=username,
                     password=generate_password_hash(password),
-                    email=email
+                    email=email,
+                    grade=grade,
+                    birthday=birthday,
+                    location=location
                 )
                 db.session.add(user)
                 db.session.commit()

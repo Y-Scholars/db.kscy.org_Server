@@ -14,13 +14,19 @@ class UserModel(db.Model):
     permission = Column(String(255), nullable=False, default='USER')
     updated_at = Column(DateTime)
     created_at = Column(DateTime, default=datetime.datetime.now)
+    grade = Column(Integer, default=-1)
+    birthday = Column(String(255), nullable=False)
+    location = Column(String(255), nullable=False)
 
-    def __init__(self, username=None, email=None, password=None, permission=None, updated_at=None):
+    def __init__(self, username=None, email=None, password=None, permission=None, updated_at=None, grade=None, birthday=None, location=None):
         self.username = username
         self.email = email
         self.password = password
         self.permission = permission
         self.updated_at = updated_at
+        self.grade = grade
+        self.birthday = birthday
+        self.location = location
 
 
 def get_user(user_id=0):
