@@ -9,7 +9,10 @@ def serialize_user(user):
         'email': user.email,
         'permission': user.permission,
         'updated_at': None if user.updated_at is None else user.updated_at.isoformat(),
-        'created_at': user.created_at.isoformat()
+        'created_at': user.created_at.isoformat(),
+        'grade' : user.grade,
+        'birthday' : user.birthday,
+        'location' : user.location
     }
 
 
